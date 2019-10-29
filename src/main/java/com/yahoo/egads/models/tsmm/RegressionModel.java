@@ -22,6 +22,7 @@
 
 package com.yahoo.egads.models.tsmm;
 
+import com.google.common.collect.ImmutableMap;
 import com.yahoo.egads.data.*;
 import com.yahoo.egads.data.TimeSeries.Entry;
 import org.json.JSONObject;
@@ -101,6 +102,46 @@ public class RegressionModel extends TimeSeriesAbstractModel {
               i++;
           }
     }
+
+    public Map<String, Object> getModelParams(){
+
+//      "Single variable regression model with a slope of " + this.slope + " and an intercept of " + this.intercept + ". That is, y=" + this.intercept + (this.slope > 0.0D?"+":"") + this.slope + "*" + this.independentVariable + ".";
+        String[] words = forecaster.toString().split(" ");
+
+        double slope = Double.parseDouble(words[8]);
+        double intercept = Double.parseDouble(words[13].substring(0, words[13].length()-1));
+        double range = getValueRange( data );
+
+
+        Map<String, Object> parameters = ImmutableMap.of(
+                "range", range,
+                "slope", slope,
+                "intercept", intercept,
+                "startTime", data.get(0).time,
+                "period", data.get(1).time - data.get(0).time);
+
+        return parameters;
+    }
+
+    public void predict( Map<String, Object> params, TimeSeries.DataSequence observed, TimeSeries.DataSequence expected ){
+
+        double slope = Double.parseDouble(params.get("slope").toString());
+        double intercept = Double.parseDouble(params.get("intercept").toString());
+        long startTime = Long.parseLong(params.get("startTime").toString());
+        long period = Long.parseLong(params.get("period").toString());
+
+
+        int startLogicalIndex = (int)(( observed.get(0).time - startTime ) / period);
+
+        int inputSize = observed.size();
+
+        for( int i = 0 ; i < inputSize ; i++ ){
+            double expected_value = (startLogicalIndex + i) * slope + intercept;
+            expected.set(i, (new Entry(observed.get(i).time, (float) expected_value )));
+        }
+
+    }
+
 
     public void toJson(JSONStringer json_out) {
 

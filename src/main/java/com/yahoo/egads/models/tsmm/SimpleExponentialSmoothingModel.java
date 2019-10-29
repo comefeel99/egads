@@ -9,6 +9,7 @@
 
 package com.yahoo.egads.models.tsmm;
 
+import com.google.common.collect.ImmutableMap;
 import com.yahoo.egads.data.*;
 import com.yahoo.egads.data.TimeSeries.Entry;
 import org.json.JSONObject;
@@ -52,7 +53,8 @@ public class SimpleExponentialSmoothingModel extends TimeSeriesAbstractModel {
         observedData.setTimeVariable("x"); 
         
         // TODO: Make weights configurable.
-        forecaster = new net.sourceforge.openforecast.models.SimpleExponentialSmoothingModel(0.75);
+        forecaster = net.sourceforge.openforecast.models.SimpleExponentialSmoothingModel.getBestFitModel(observedData);
+//        forecaster = new net.sourceforge.openforecast.models.SimpleExponentialSmoothingModel(0.75);
         forecaster.init(observedData);
         initForecastErrors(forecaster, data);
         
@@ -89,6 +91,45 @@ public class SimpleExponentialSmoothingModel extends TimeSeriesAbstractModel {
               i++;
           }
     }
+
+
+    public Map<String, Object> getModelParams(){
+
+
+        double alpha = ((net.sourceforge.openforecast.models.SimpleExponentialSmoothingModel)forecaster).getAlpha();
+        double range = getValueRange( data );
+
+        Map<String, Object> parameters = ImmutableMap.of(
+                "range", range,
+                "alpha", alpha);
+
+        return parameters;
+    }
+
+    public void predict( Map<String, Object> params, TimeSeries.DataSequence observed, TimeSeries.DataSequence expected ){
+
+        double alpha = Double.parseDouble(params.get("alpha").toString());
+
+        int inputSize = observed.size();
+
+        double preObservedValue = 0;
+        double preExpectedValue = 0;
+        double expected_value;
+
+        for( int i = 0 ; i < inputSize ; i++ ){
+
+            if( i == 0 ){
+                preObservedValue = preExpectedValue = observed.get(i).value;
+            }
+
+            expected_value = alpha * preObservedValue + (1.0D - alpha) * preExpectedValue;
+            expected.set(i, (new Entry(observed.get(i).time, (float) expected_value )));
+
+            preObservedValue = observed.get(i).value;
+            preExpectedValue = expected_value;
+        }
+    }
+
 
     public void toJson(JSONStringer json_out) {
 

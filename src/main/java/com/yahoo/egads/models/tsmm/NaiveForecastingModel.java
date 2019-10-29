@@ -9,6 +9,7 @@
 
 package com.yahoo.egads.models.tsmm;
 
+import com.google.common.collect.ImmutableMap;
 import com.yahoo.egads.data.*;
 import com.yahoo.egads.data.TimeSeries.Entry;
 import org.json.JSONObject;
@@ -88,6 +89,37 @@ public class NaiveForecastingModel extends TimeSeriesAbstractModel {
               i++;
           }
     }
+
+    public Map<String, Object> getModelParams(){
+
+        double range = getValueRange( data );
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put( "range", range );
+
+        return parameters;
+    }
+
+
+
+    public void predict( Map<String, Object> params, TimeSeries.DataSequence observed, TimeSeries.DataSequence expected ) {
+
+        int inputSize = observed.size();
+
+        double preObservedValue = 0;
+        for( int i = 0 ; i < inputSize ; i++ ){
+            if( i == 0 ){
+                preObservedValue = observed.get(i).value;
+            }
+
+            double expected_value = preObservedValue;
+            expected.set(i, (new Entry(observed.get(i).time, (float) expected_value )));
+
+            preObservedValue = observed.get(i).value;
+        }
+    }
+
+
 
     public void toJson(JSONStringer json_out) {
 

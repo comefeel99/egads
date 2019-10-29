@@ -91,6 +91,14 @@ public class MovingAverageModel extends TimeSeriesAbstractModel {
           }
     }
 
+    public Map<String, Object> getModelParams(){
+        return null;
+    }
+
+    public void predict( Map<String, Object> params, TimeSeries.DataSequence observed, TimeSeries.DataSequence expected ) {
+    }
+
+
     public void toJson(JSONStringer json_out) {
 
     }

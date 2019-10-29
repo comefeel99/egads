@@ -10,8 +10,10 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
+import com.yahoo.egads.data.TimeSeries;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
@@ -416,5 +418,14 @@ public class OlympicModel2 extends TimeSeriesAbstractModel {
             }
         }
     }
+
+    public Map<String, Object> getModelParams(){
+        return null;
+    }
+
+    public void predict(Map<String, Object> params, TimeSeries.DataSequence observed, TimeSeries.DataSequence expected ) {
+    }
+
+
 
 }

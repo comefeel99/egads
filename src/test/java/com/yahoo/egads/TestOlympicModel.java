@@ -25,6 +25,34 @@ import org.testng.annotations.Test;
 // scoring.
 public class TestOlympicModel {
 
+
+
+  @Test
+  public void testOlympicModel2() throws Exception {
+    // Test cases: ref window: 10, 5
+    // Drops: 0, 1
+    String[] refWindows = new String[]{"52", "5"};
+    String[] drops = new String[]{"0", "1"};
+    // Load the true expected values from a file.
+//        String configFile = "src/test/resources/sample_config.ini";
+    String configFile = "src/test/resources/sample_sales_month_count_config.ini";
+    InputStream is = new FileInputStream(configFile);
+    Properties p = new Properties();
+    p.load(is);
+    ArrayList<TimeSeries> actual_metric = com.yahoo.egads.utilities.FileUtils
+            .createTimeSeries("src/test/resources/sample_sales_month_count.csv", p);
+
+    OlympicModel model = new OlympicModel(p);
+    model.train(actual_metric.get(0).data);
+
+    TimeSeries.DataSequence sequence = new TimeSeries.DataSequence(actual_metric.get(0).startTime(),
+            actual_metric.get(0).lastTime(),
+            3600);
+    sequence.setLogicalIndices(actual_metric.get(0).startTime(), 3600);
+    model.predict(sequence);
+
+  }
+
     @Test
     public void testOlympicModel() throws Exception {
         // Test cases: ref window: 10, 5

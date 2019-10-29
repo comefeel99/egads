@@ -22,6 +22,7 @@
 
 package com.yahoo.egads.models.tsmm;
 
+import com.google.common.collect.ImmutableMap;
 import com.yahoo.egads.data.*;
 import com.yahoo.egads.data.TimeSeries.Entry;
 import org.json.JSONObject;
@@ -102,6 +103,13 @@ public class MultipleLinearRegressionModel extends TimeSeriesAbstractModel {
               sequence.set(i, (new Entry(data.get(i).time, (float) pnt.getDependentValue())));
               i++;
           }
+    }
+
+    public Map<String, Object> getModelParams(){
+        return null;
+    }
+
+    public void predict( Map<String, Object> params, TimeSeries.DataSequence observed, TimeSeries.DataSequence expected ) {
     }
 
     public void toJson(JSONStringer json_out) {

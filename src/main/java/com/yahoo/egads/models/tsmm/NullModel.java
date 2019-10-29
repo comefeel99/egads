@@ -11,6 +11,7 @@ package com.yahoo.egads.models.tsmm;
 import com.yahoo.egads.data.*;
 import com.yahoo.egads.data.TimeSeries.Entry;
 
+import java.util.Map;
 import java.util.Properties;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,4 +50,13 @@ public class NullModel extends TimeSeriesAbstractModel {
             logger.info(data.get(i).time + "," + data.get(i).value + "," + data.get(i).value);
         }
     }
+
+    public Map<String, Object> getModelParams(){
+        return null;
+    }
+
+    public void predict( Map<String, Object> params, TimeSeries.DataSequence observed, TimeSeries.DataSequence expected ) {
+    }
+
+
 }

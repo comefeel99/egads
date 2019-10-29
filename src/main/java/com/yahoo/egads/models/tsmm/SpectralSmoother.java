@@ -6,9 +6,11 @@
 
 package com.yahoo.egads.models.tsmm;
 
+import java.util.Map;
 import java.util.Properties;
 import java.util.Hashtable;
 
+import com.yahoo.egads.data.TimeSeries;
 import com.yahoo.egads.data.TimeSeries.Entry;
 import com.yahoo.egads.data.TimeSeries.DataSequence;
 import com.yahoo.egads.utilities.SpectralMethods;
@@ -123,5 +125,14 @@ public class SpectralSmoother extends TimeSeriesAbstractModel {
     public String getModelName() {
         return "SpectralSmoother";
     }
+
+
+    public Map<String, Object> getModelParams(){
+        return null;
+    }
+
+    public void predict(Map<String, Object> params, TimeSeries.DataSequence observed, TimeSeries.DataSequence expected ) {
+    }
+
 
 }

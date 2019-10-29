@@ -16,6 +16,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
+import org.joda.time.DateTime;
+
 
 public class FileUtils {
     
@@ -57,7 +59,14 @@ public class FileUtils {
                     }
                 }
                 if (firstLine == false && tokens.length > 1) {
-                    curTimestamp = (new Double(tokens[0])).longValue();
+
+                    if( isNumeric(tokens[0]) ) {
+                        curTimestamp = (new Double(tokens[0])).longValue();
+                    }
+                    else {
+                        DateTime inpuTime = new DateTime(tokens[0]);
+                        curTimestamp = inpuTime.getMillis()/1000;
+                    }
                 }
                 for (int i = 1; i < tokens.length; i++) {
                     // Assume that the first line contains the column names.

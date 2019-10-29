@@ -25,6 +25,8 @@ package com.yahoo.egads.models.tsmm;
 import com.yahoo.egads.data.*;
 import org.json.JSONObject;
 import org.json.JSONStringer;
+
+import java.util.Map;
 import java.util.Properties;
 
 // Picks the best model from the available EGADS models.
@@ -45,62 +47,110 @@ public class AutoForecastModel extends TimeSeriesAbstractModel {
         // At this point, reset does nothing.
     }
     
-    public void train(TimeSeries.DataSequence data) {
+    public void train(TimeSeries.DataSequence data) throws IllegalArgumentException  {
+
+
         // Init all.
-        OlympicModel olympModel = new OlympicModel(p);
-        MovingAverageModel movingAvg = new MovingAverageModel(p);
-        MultipleLinearRegressionModel mlReg = new MultipleLinearRegressionModel(p);
+//        OlympicModel olympModel = new OlympicModel(p);
+//        MovingAverageModel movingAvg = new MovingAverageModel(p);
+//        MultipleLinearRegressionModel mlReg = new MultipleLinearRegressionModel(p);
         NaiveForecastingModel naive = new NaiveForecastingModel(p);
-        PolynomialRegressionModel poly = new PolynomialRegressionModel(p);
+//        PolynomialRegressionModel poly = new PolynomialRegressionModel(p);
         RegressionModel regr = new RegressionModel(p);
         SimpleExponentialSmoothingModel simpleExp = new SimpleExponentialSmoothingModel(p);
         TripleExponentialSmoothingModel tripleExp = new TripleExponentialSmoothingModel(p);
-        WeightedMovingAverageModel weightAvg = new WeightedMovingAverageModel(p);
-        DoubleExponentialSmoothingModel doubleExp = new DoubleExponentialSmoothingModel(p);
+//        WeightedMovingAverageModel weightAvg = new WeightedMovingAverageModel(p);
+//        DoubleExponentialSmoothingModel doubleExp = new DoubleExponentialSmoothingModel(p);
         
         // Train all.
-        olympModel.train(data);
-        movingAvg.train(data);
-        mlReg.train(data);
-        naive.train(data);
-        poly.train(data);
-        regr.train(data);
-        simpleExp.train(data);
-        tripleExp.train(data);
-        weightAvg.train(data);
-        doubleExp.train(data);
-        
+//        olympModel.train(data);
+
+//        try {
+//            movingAvg.train(data);
+//        }catch (IllegalArgumentException e) {
+//            movingAvg = null;
+//        }
+//
+//        try {
+//            mlReg.train(data);
+//        }catch (IllegalArgumentException e) {
+//            mlReg = null;
+//        }
+
+        try {
+            naive.train(data);
+        }catch (IllegalArgumentException e) {
+            naive = null;
+        }
+
+//        try {
+//            poly.train(data);
+//        }catch (IllegalArgumentException e) {
+//            poly = null;
+//        }
+
+        try {
+            regr.train(data);
+        }catch (IllegalArgumentException e) {
+            regr = null;
+        }
+
+        try {
+            simpleExp.train(data);
+        }catch (IllegalArgumentException e) {
+            simpleExp = null;
+        }
+
+        try {
+            tripleExp.train(data);
+        }catch (IllegalArgumentException e) {
+            tripleExp = null;
+        }
+
+//        try {
+//            weightAvg.train(data);
+//        }catch (IllegalArgumentException e) {
+//            weightAvg = null;
+//        }
+
+//        try {
+//            doubleExp.train(data);
+//        }catch (IllegalArgumentException e) {
+//            doubleExp = null;
+//        }
+
+
         // Pick best.
-        if (betterThan(olympModel, myModel)) {
-            myModel = olympModel;
-        }
-        if (betterThan(movingAvg, myModel)) {
-            myModel = movingAvg;
-        }
-        if (betterThan(mlReg, myModel)) {
-            myModel = mlReg;
-        }
-        if (betterThan(naive, myModel)) {
+//        if (betterThan(olympModel, myModel)) {
+//            myModel = olympModel;
+//        }
+//        if (movingAvg != null && betterThan(movingAvg, myModel)) {
+//            myModel = movingAvg;
+//        }
+//        if (mlReg != null && betterThan(mlReg, myModel)) {
+//            myModel = mlReg;
+//        }
+        if (naive != null && betterThan(naive, myModel)) {
             myModel = naive;
         }
-        if (betterThan(poly, myModel)) {
-            myModel = poly;
-        }
-        if (betterThan(regr, myModel)) {
+//        if (poly != null && betterThan(poly, myModel)) {
+//            myModel = poly;
+//        }
+        if (regr != null && betterThan(regr, myModel)) {
             myModel = regr;
         }
-        if (betterThan(simpleExp, myModel)) {
+        if (simpleExp != null && betterThan(simpleExp, myModel)) {
             myModel = simpleExp;
         }
-        if (betterThan(tripleExp, myModel)) {
+        if (tripleExp != null && betterThan(tripleExp, myModel)) {
             myModel = tripleExp;
         }
-        if (betterThan(weightAvg, myModel)) {
-            myModel = weightAvg;
-        }
-        if (betterThan(doubleExp, myModel)) {
-            myModel = doubleExp;
-        }
+//        if (weightAvg != null && betterThan(weightAvg, myModel)) {
+//            myModel = weightAvg;
+//        }
+//        if (doubleExp != null && betterThan(doubleExp, myModel)) {
+//            myModel = doubleExp;
+//        }
         
         initForecastErrors(myModel, data);
        
@@ -112,6 +162,10 @@ public class AutoForecastModel extends TimeSeriesAbstractModel {
     }
 
     public String getModelName() {
+        if( myModel != null ){
+            return myModel.getModelName();
+        }
+
         return modelName;
     }
 
@@ -119,11 +173,29 @@ public class AutoForecastModel extends TimeSeriesAbstractModel {
         myModel.predict(sequence);        
     }
 
+    public Map<String, Object> getModelParams() throws Exception {
+
+        if( myModel != null ){
+            return myModel.getModelParams();
+        }
+
+        return null;
+    }
+
+    public void predict( Map<String, Object> params, TimeSeries.DataSequence observed, TimeSeries.DataSequence expected ) {
+    }
+
+
+
     public void toJson(JSONStringer json_out) {
 
     }
 
     public void fromJson(JSONObject json_obj) {
 
+    }
+
+    public TimeSeriesAbstractModel getBestModel(){
+        return myModel;
     }
 }

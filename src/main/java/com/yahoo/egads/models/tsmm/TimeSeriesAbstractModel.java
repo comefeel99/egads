@@ -62,6 +62,26 @@ public abstract class TimeSeriesAbstractModel implements TimeSeriesModel {
 
     }
 
+    public double getValueRange(TimeSeries.DataSequence observed){
+
+        if( observed == null || observed.size() == 0 ){
+            return 0.0;
+        }
+
+        float min = observed.get(0).value;
+        float max = observed.get(0).value;
+        for( TimeSeries.Entry entry : observed ){
+
+            if( entry.value > max )
+                max = entry.value;
+
+            if( entry.value < min )
+                min = entry.value;
+        }
+
+        return  Math.abs(max - min);
+    }
+
     // 1 when absolute value of error1 is smaller than the absolute value of error2
     // 0 when absolute value of error1 is equal(upto tolerance) to the absolute value of error2
     // -1 when absolute value of error1 is greater than the absolute value of error2
